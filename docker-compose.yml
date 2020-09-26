@@ -8,3 +8,6 @@ services:
       - "3000:3000"
     volumes:
       - .:/usr/src/app
+
+  redis:
+    image: redis

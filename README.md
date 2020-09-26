@@ -46,3 +46,18 @@
   docker system prune  
   ```
   
+- add service
+  - docker-compose에 새로운 서비스 redis 추가
+  - Redis를 사용하여 Welcome#index 에 page hit 구현
+  ```
+  Gemfile에서
+  gem 'redis', '~> 4.0' # 주석해제
+
+  Gemfile을 수정했으니 이미지 다시 빌드
+  docker-compose stop web (컨테이너 중지)
+  docker-compose build web
+  
+  docker-compose ps (상태 확인)
+  docker-compose up -d (컨테이너가 실행되지 않았다면.. )  
+  docker-compose exec web bin/rails g controller welcome index
+  ```
