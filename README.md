@@ -61,3 +61,44 @@
   docker-compose up -d (컨테이너가 실행되지 않았다면.. )  
   docker-compose exec web bin/rails g controller welcome index
   ```
+ - Postgres Database
+   - gem install
+   - config/database.yml 수정
+   - 환경변수를 파일로 지정
+   - User Scaffold
+   - Named volume을 사용하여 데이터 영속화
+
+   ```
+   docker-compose stop web
+   docker-compose build web
+   docker-compuse up -d
+
+   # db:create 하지 않는 이유는 postgres 서비스에서 
+   # POSTGRES_DB 값을 테이블의 이름으로 사용하여 생성하기 때문이다.
+
+   # Scaffold User
+   docker-compose exec web \
+       bin/rails g scaffold User first_name:string last_name:string
+
+   #파일 권한 주의
+   sudo chown <user>:<user> -R .
+
+   # migration
+   docker-compose exec web \
+       bin/rails db:migrate
+   # https://localhost:3000/users 에 접속
+
+   # 영속화를 위한 docker-compose.yml에 volumes 설정 이후
+   # 재시작! (별도 명령이 없으면 서비스에 대해 같은 컨테이너를 재사용하기 때문에)
+   # 명시적으로 컨테이너를 재생성해야함
+   docker-compose stop database
+   docker-compose rm -f database
+
+   docker-compose up -d database
+
+   # 다 사라졌으므로 다시 마이그레이션
+   docker-compose exec web bin/rails db:create db:migrate
+
+   # 데이터가 저장되는 명명된 볼륨의 위치 확인
+   docker volume inspect --format '{{ .Mountpoint }}' dockerails_db_data
+   ```
