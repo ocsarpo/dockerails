@@ -102,3 +102,38 @@
    # 데이터가 저장되는 명명된 볼륨의 위치 확인
    docker volume inspect --format '{{ .Mountpoint }}' dockerails_db_data
    ```
+  - Webpacker
+    - webpack 설치를 위해 Dockerfile 수정
+    - webpack gem install (이미 되어 있음)
+    - rails webpacker:install (이미 되어 있음)
+    - webpacker로 react 설치
+    - webpack_dev_server 서비스 추가
+    - Hello React!
+
+    ```
+    Dockerfile 수정,
+    gem 'webpacker', '~> 4.0',
+    
+    docker-compose build web
+    docker-compose stop web
+    # 웹팩 설치
+    docker-compose run web bin/rails webpacker:install
+    리액트 설치
+    docker-compose run web bin/rails webpacker:install:react
+    
+    # docker-compose.yml에 webpack_dev_server 서비스 추가
+    # web 서비스에도 환경 추가하여 webpack-dev-server를 찾을 수 있도록 함
+    # 서비스 재시작
+    docker-compose up -d web
+
+    # 새로운 서비스 실행
+    docker-compose up -d webpack-dev-server
+
+    # Hello React를 위한 컨트롤러/뷰 생성
+    docker-compose exec web bin/rails g controller pages home
+
+    sudo chown <user>:<user> -R .
+
+    # app/views/pages/home.html.erb 수정
+    # http://localhost:3000/pages/home 접속
+    ```
