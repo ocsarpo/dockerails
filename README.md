@@ -1,24 +1,14 @@
-# README
+# DockeRails
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+도커를 사용한 레일즈 프로젝트
 
-Things you may want to cover:
+- Dockerfile
+  - Dockerfile로 레일즈 컨테이너 실행
+  - .dockerignore로 이미지 최적화
+  - 캐싱으로 이미지 최적화
+  - 라벨링
+  ```
+  docker build -t railsapp .
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+  docker run -p 3000:3000 railsapp
+  ```

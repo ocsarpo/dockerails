@@ -1,0 +1,17 @@
+# Git
+.git
+.gitignore
+
+# Log
+log/*
+
+# Temp files
+tmp/*
+
+# Editore temp files
+# vim
+*.swp
+*.swo
+
+# vscode
+vscode/*
