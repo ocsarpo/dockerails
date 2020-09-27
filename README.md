@@ -137,3 +137,98 @@
     # app/views/pages/home.html.erb 수정
     # http://localhost:3000/pages/home 접속
     ```
+
+  - RSpec
+    - 젬 설치
+    - RSpec 설치
+    - User 모델에 대한 spec 생성
+    - 밸리데이션 추가, 테스트    
+    ```
+    # 젬 추가 후
+    # web 서비스 중지, 다시 빌드, 컨테이너 다시 생성
+    docker-compose stop web
+    docker-compose build web
+    docker-compose up -d --force-recreate web
+
+    # RSpec 설치
+    docker-compose exec web bin/rails generate rspec:install
+
+    # spec 구동
+    docker-compose exec web bin/rails spec
+
+    # User 모델 spec 생성
+    docker-compose exec web bin/rails generate rspec:model user
+
+    # 권한 주의
+    sudo chown <user>:<group> -R .
+
+    # spec/models/user_spec.rb 작성
+    # spec 구동
+    docker-compose exec web bin/rails spec
+
+    # user.rb 밸리데이션 작성 후 다시 spec 구동
+    ```
+  - Capybara
+    - 젬 설치
+    - mkdir spec/system
+    - spec/system/page_views_spec.rb 작성
+    - rack_test 드라이버 사용하여 빠른 테스트
+    - 자바스크립트에 의존하는 시스템 테스트 (셀레니움)
+    - 셀레니움 젬 추가
+    - 셀레니움 크롬 서비스 추가
+    - Capybara 셀레니움 크롬 드라이버 등록
+    - 헤드리스를 사용하여 빠른 테스트
+    - Capybara 셀레니움 헤드리스 크롬 드라이버 등록
+    ```
+    # 젬 추가 후, 빌드,중지,다시생성
+    docker-compose build web
+    docker-compose stop web
+    docker-compose up -d --force-recreate web
+
+    mkdir spec/system
+    # spec/system/page_views_spec.rb 생성, 작성
+    # spec/rails_helper.rb 에 rack_test를 쓰도록 설정
+
+    # 시스템 테스트 실행
+    docker-compose exec web rspec spec/system/
+
+    # JavaScript에 의존하는 테스트를 위해 welcome/index.html.erb 에 코드 추가
+    # application.html.erb.에 추가
+
+    # js: true 인 시스템 스펙 시나리오 추가
+    # 셀레니움 젬 추가
+    docker-compose build web
+    docker-compose stop web
+    docker-compose up -d --force-recreate web
+
+    # docker-compose.yml에 selenium_chrome 서비스 추가
+      - selenium_chrome 서비스, web에 셀레니움 크롬 컨테이너에서 접근할 포트 4000추가
+    # 서비스 시작
+    docker-compose up -d selenium_chrome
+
+    # spec/support/capybara.rb 생성하고, 작성
+    
+    # 카피바라 드라이버를 RSpec에서 쓰기 위한 설정
+    # spec/rails_helper.rb 수정
+      -> capybara.rb 포함, js 시스템 테스트에 대한 설정 추가
+
+    # 시스템 테스트 수행
+    docker-compose exec web rspec spec/system/
+
+    # VNC 클라이언트로 vnc://localhost:5900 으로 접속하면 *비번 secret*
+    셀레니움 크롬 컨테이너 리눅스 데스크탑이 나오고
+    시스템 테스트 시 브라우저가 나타났다 사라진다.
+
+    # 헤드리스 브라우징
+
+    # spec/support/capybara.rb에 헤드리스 크롬을 위한 드라이버 등록
+    require "selenium/webdriver" 추가
+    헤드리스크롬 드라이버 등록 코드 추가
+
+    드라이버를 등록했으니 rails.helper.rb의 js: true인 설정을 해당 드라이버로 변경
+
+    테스트 수행
+    docker-compose exec web rspec spec/system/
+    -> 좀 더 빠른 테스트 가능
+
+    ```

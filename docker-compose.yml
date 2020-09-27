@@ -5,6 +5,7 @@ services:
     build: .
     ports:
       - "3000:3000"
+      - "4000:4000"
     volumes:
       - .:/usr/src/app
     env_file:
@@ -27,6 +28,13 @@ services:
     environment:
       - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
 
+  selenium_chrome:
+    image: selenium/standalone-chrome-debug
+    logging:
+      driver: none
+    ports:
+      - "5900:5900"
+      
   redis:
     image: redis
 
