@@ -264,3 +264,18 @@
       docker-compose build webpack-dev-server
       docker-compose up -d webpack-dev-server
       ```
+
+  - 성가신 문제 해결
+    - Server already running 문제
+    - 쉘 스크립트(docker-entrypoint.sh)를 작성하여 해결
+      - `server.pid`가 존재하면 삭제
+      - `exec "$@"`는 현재 실행중인 프로세스를 뒤에 지정한 프로그램을 실행하는 것으로 대체 하라는 명령
+    - 스크립트에 실행권한 부여 `chmod +x docker-entrypoint.sh`
+    - `Dockerfile` 수정
+      - 마지막 `CMD` 명령 직전에 `ENTRYPOINT` 명시
+    - `web` 서비스 중지/다시빌드/다시시작
+    ```
+    docker-compose stop web
+    docker-compose build web
+    docker-compose up -d web
+    ```
