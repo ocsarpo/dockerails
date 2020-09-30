@@ -232,3 +232,35 @@
     -> 좀 더 빠른 테스트 가능
 
     ```
+  - 진보된 Gem 관리
+    - `Dockerfile` 에 `BUNDLE_PATH` 환경변수 지정
+    - `docker-compose.yml`에 명명된 볼륨 생성, `web`과 `webpack-dev-server`에 볼륨 마운트
+    - `web` 다시 빌드, 실행
+    - `gem_cache` 볼륨이 생성되면 `web` 컨테이너에 대해 직접 `bundle` 명령 실행 가능
+    - `devise` 젬 설치
+    - `docker-compose exec web bundle install`
+    - `webpack-dev-server`도 다시 빌드, 실행
+    - 두 서비스가 같은 `gem_cache` 볼륨을 사용하기 때문에 한쪽에서 추가된 gem은 다른 한 쪽에서 사용 가능
+    - 장점
+      - gem 관리 속도 향상
+      - 친숙한 `bundle install` 워크플로 사용 가능
+    - 단점
+      - `bundle` 커맨드는 로컬 볼륨만 업데이트한다. 궁극적으로는 이미지를 빌드할 필요가 있음.
+      - 어떤 젬이 로드되고, 사용하는지 혼동할 수 있다.
+      - `Dockerfile`, `docker-compose.yml` 모두에 변경을 하는 복잡성, 그리고 gem이 겹쳐지는 뉘앙스를 이해해야한다.
+
+      ```
+      # Dockerfile, docker-compose.yml 수정 후
+      docker-compose build web
+      docker-compose up -d web
+      docker-compose exec web bundle install
+      # 와우~ 빨라졌어~
+
+      # 로컬 Gemfile에 `gem 'devise'`추가
+      docker-compose exec web bundle install
+      # devise에 필요한 젬만 설치하고 나머지는 재사용하는 것을 볼 수 있다.
+
+      # webpack-dev-server 다시 빌드, 실행
+      docker-compose build webpack-dev-server
+      docker-compose up -d webpack-dev-server
+      ```
